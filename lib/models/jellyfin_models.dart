@@ -4017,6 +4017,7 @@ class LyricLine {
   LyricLine({
     this.text,
     this.start,
+    this.cues,
   });
 
   /// Gets the text of this lyric line.
@@ -4026,6 +4027,10 @@ class LyricLine {
   /// Gets the start time in ticks.
   @HiveField(1)
   int? start;
+
+  /// Gets the time-aligned cues for the song's lyrics.
+  @HiveField(2)
+  List<LyricLineCue>? cues;
 
   int get startMicros => start != null ? start! ~/ 10 : 0;
 
@@ -4060,4 +4065,39 @@ class LyricDto {
       _$LyricDtoFromJson(json);
 
   Map<String, dynamic> toJson() => _$LyricDtoToJson(this);
+}
+
+@JsonSerializable(
+  fieldRename: FieldRename.pascal,
+  explicitToJson: true,
+  anyMap: true,
+)
+@HiveType(typeId: 98)
+class LyricLineCue {
+  LyricLineCue({
+    required this.position,
+    required this.start,
+    this.end,
+  });
+
+  /// Gets the character index of the lyric.
+  @HiveField(0)
+  int position;
+
+  /// Gets the timestamp the lyric is synced to in ticks.
+  @HiveField(1)
+  int start;
+
+  /// Gets the end timestamp the lyric is synced to in ticks.
+  @HiveField(2)
+  int? end;
+
+  int get startMicros => start ~/ 10;
+
+  int get endMicros => end != null ? end! ~/ 10 : 0;
+
+  factory LyricLineCue.fromJson(Map<String, dynamic> json) =>
+      _$LyricLineCueFromJson(json);
+
+  Map<String, dynamic> toJson() => _$LyricLineCueToJson(this);
 }
