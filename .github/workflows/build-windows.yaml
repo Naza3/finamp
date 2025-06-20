@@ -1,0 +1,32 @@
+name: Build Windows
+
+
+on:
+  workflow_dispatch:
+
+jobs:
+  build-windows:
+    name: Build for Windows
+    runs-on: windows-latest
+
+    steps:
+      - name: Checkout source
+        uses: actions/checkout@v2
+
+      - name: Set up Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          channel: stable  # 可以改为 beta/dev 等
+          flutter-version: 'any'  # 可省略，也可以写具体版本
+
+      - name: Install dependencies
+        run: flutter pub get
+
+      - name: Build Windows EXE
+        run: flutter build windows
+
+      - name: Upload Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: windows-build
+          path: build/windows/runner/Release/
